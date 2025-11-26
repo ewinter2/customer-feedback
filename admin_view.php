@@ -1,78 +1,161 @@
-<?php include("db.php"); ?>
+<?php
+session_start();
+include("db.php");
+
+// Only admins allowed
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: admin_login.php");
+    exit();
+}
+
+$admin_id = $_SESSION['admin_id'];
+$admin_name = $_SESSION['admin_name'];
+?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin Feedback View</title>
+    <title><?php echo $admin_name; ?>'s Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        /* LEFT FILTER PANEL */
+        .filter-panel {
+            max-width: 900px;
+            margin: 0 auto 15px auto;
+            padding: 10px 0;
+            text-align: left;
+        }
+
+        .filter-panel label {
+            font-weight: bold;
+            display: block;
+            margin-top: 12px;
+        }
+
+        .filter-panel input,
+        .filter-panel select {
+            width: 250px;
+            padding: 8px;
+            margin-top: 4px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background-color: #ffffff;
+        }
+
+        .filter-panel button {
+            width: auto;
+            padding: 10px 20px;
+            margin-top: 10px;
+            background-color: #059c8e;
+            color: white;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .filter-panel button:hover {
+            background-color: #047c72;
+        }
+
+        /* KEEP WHITE BOX ONLY FOR THE TABLE */
+        .table-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+    </style>
+
 </head>
+
 <body>
 
-<h2>Admin Feedback Reports</h2>
+<!-- Dashboard Title -->
+<h2 style="text-align:center; margin-top:30px;">
+    <?php echo $admin_name; ?>'s Dashboard
+</h2>
 
-<form method="GET">
-    <label>Search by Customer Email:</label><br>
-    <input type="text" name="email"><br><br>
+<!-- Top Navigation -->
+<div style="text-align:center; margin-bottom: 15px;">
+    <a href="manage_products.php">Manage My Products</a> |
+    <a href="admin_logout.php">Logout</a>
+</div>
 
-    <label>Search by Keyword:</label><br>
-    <input type="text" name="keyword"><br><br>
+<!-- LEFT-ALIGNED FILTERS (no card, no white background) -->
+<div class="filter-panel">
 
-    <label>Search by Category:</label><br>
-    <select name="category">
-        <option value="">-- All Categories --</option>
+    <form method="GET">
 
-        <?php
-        $cat_sql = "SELECT * FROM Category";
-        $cat_result = mysqli_query($conn, $cat_sql);
+        <label>Product:</label>
+        <select name="product">
+            <option value="">-- All My Products --</option>
 
-        while ($row = mysqli_fetch_assoc($cat_result)) {
-            echo "<option value='" . $row['CategoryID'] . "'>" . 
-                  $row['CategoryName'] . "</option>";
-        }
-        ?>
-    </select>
-    <br><br>
+            <?php
+            $p_sql = "SELECT * FROM Product WHERE AdminID = $admin_id";
+            $p_result = mysqli_query($conn, $p_sql);
 
-    <button type="submit">Search</button>
-</form>
+            while ($p = mysqli_fetch_assoc($p_result)) {
+                echo "<option value='{$p['ProductID']}'>{$p['ProductName']}</option>";
+            }
+            ?>
+        </select>
 
-<hr>
+        <label>Customer Email:</label>
+        <input type="text" name="email" placeholder="Search by email">
+
+        <label>Keyword:</label>
+        <input type="text" name="keyword" placeholder="Search feedback text">
+
+        <button type="submit">Apply Filters</button>
+
+    </form>
+</div>
+
+
+<!-- FEEDBACK TABLE IN A CENTERED WHITE CARD -->
+<div class="table-container">
 
 <?php
-// Build dynamic query
+// Base query
 $query = "
-SELECT Feedback.FeedbackComment, Feedback.FeedbackRating, Feedback.FeedbackDate,
-       Customer.CustomerName, Customer.CustomerEmail,
-       Category.CategoryName
-FROM Feedback
-JOIN Customer ON Feedback.CustomerID = Customer.CustomerID
-JOIN Category ON Feedback.CategoryID = Category.CategoryID
-WHERE 1=1
+    SELECT Feedback.*, Customer.CustomerName, Customer.CustomerEmail,
+           Product.ProductName
+    FROM Feedback
+    JOIN Customer ON Feedback.CustomerID = Customer.CustomerID
+    JOIN Product ON Feedback.ProductID = Product.ProductID
+    WHERE Product.AdminID = $admin_id
 ";
+
+// Filters
+if (!empty($_GET['product'])) {
+    $prod = $_GET['product'];
+    $query .= " AND Product.ProductID = $prod";
+}
 
 if (!empty($_GET['email'])) {
     $email = $_GET['email'];
-    $query .= " AND CustomerEmail LIKE '%$email%'";
+    $query .= " AND Customer.CustomerEmail LIKE '%$email%'";
 }
 
 if (!empty($_GET['keyword'])) {
     $keyword = $_GET['keyword'];
-    $query .= " AND FeedbackComment LIKE '%$keyword%'";
-}
-
-if (!empty($_GET['category'])) {
-    $cat = $_GET['category'];
-    $query .= " AND Feedback.CategoryID = $cat";
+    $query .= " AND Feedback.FeedbackComment LIKE '%$keyword%'";
 }
 
 $result = mysqli_query($conn, $query);
 
+// Results
 if ($result && mysqli_num_rows($result) > 0) {
-    echo "<h3>Results:</h3>";
-    echo "<table border='1' cellpadding='10'>
+    echo "<table>
             <tr>
+                <th>Product</th>
                 <th>Customer</th>
                 <th>Email</th>
-                <th>Category</th>
                 <th>Rating</th>
                 <th>Comment</th>
                 <th>Date</th>
@@ -80,21 +163,23 @@ if ($result && mysqli_num_rows($result) > 0) {
 
     while ($row = mysqli_fetch_assoc($result)) {
         echo "<tr>
+                <td>{$row['ProductName']}</td>
                 <td>{$row['CustomerName']}</td>
                 <td>{$row['CustomerEmail']}</td>
-                <td>{$row['CategoryName']}</td>
                 <td>{$row['FeedbackRating']}</td>
                 <td>{$row['FeedbackComment']}</td>
                 <td>{$row['FeedbackDate']}</td>
-            </tr>";
+              </tr>";
     }
 
     echo "</table>";
 
 } else {
-    echo "<p>No results found.</p>";
+    echo "<p style='text-align:center;'>No feedback found for your products.</p>";
 }
 ?>
+
+</div>
 
 </body>
 </html>
