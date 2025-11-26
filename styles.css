@@ -83,3 +83,122 @@ td {
 tr:hover {
     background-color: #f1f1f1;
 }
+
+/* --- INDEX PAGE --- */
+
+.center-box {
+    text-align: center;
+    background: white;
+    padding: 30px;
+    max-width: 500px;
+    margin: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.center-box p {
+    color: #555;
+}
+
+.primary-btn {
+    background-color: #35c5e5;
+    font-size: 18px;
+    padding: 14px;
+}
+
+.primary-btn:hover {
+    background-color: #0fa8b0;
+}
+
+.admin-box {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.admin-box a {
+    font-size: 14px;
+    display: inline-block;
+    margin: 4px;
+    color: #007bff;
+}
+
+.admin-box a:hover {
+    text-decoration: underline;
+}
+
+/* PAGE CENTERING */
+.center-body {
+    background-color: #e5f4f3;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+.form-title {
+    text-align: center;
+    font-size: 26px;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+/* INPUT FIELDS */
+input, select, textarea {
+    width: 85%;
+    padding: 12px;
+    margin-top: 6px;
+    margin-bottom: 18px;
+    border-radius: 10px;
+    border: 1px solid #d0d0d0;
+    font-size: 15px;
+    background-color: #f6f6f6;
+}
+
+textarea {
+    height: 120px;
+    resize: none;
+}
+
+/* BUTTON */
+.submit-btn {
+    width: 100%;
+    background-color: #059c8e;
+    border: none;
+    color: white;
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.submit-btn:hover {
+    background-color: #047c72;
+}
+
+/* RATING DOTS */
+.rating-container {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 10px 0 20px;
+}
+
+.rating-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: #d3d3d3;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.rating-dot:hover {
+    background-color: #a8a8a8;
+}
+
+.rating-dot.selected {
+    background-color: #059c8e;
+}

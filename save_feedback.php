@@ -6,7 +6,7 @@ $name = $_POST['customer_name'];
 $email = $_POST['customer_email'];
 $comment = $_POST['comment'];
 $rating = $_POST['rating'];
-$category = $_POST['category'];
+$product = $_POST['product'];
 
 // Insert or find the customer
 $check_sql = "SELECT CustomerID FROM Customer WHERE CustomerEmail='$email'";
@@ -24,8 +24,8 @@ if (mysqli_num_rows($check_result) > 0) {
 
 // Insert feedback
 $insert_feedback = "
-    INSERT INTO Feedback (FeedbackComment, FeedbackRating, FeedbackDate, CustomerID, CategoryID)
-    VALUES ('$comment', $rating, CURDATE(), $customer_id, $category)
+    INSERT INTO Feedback (FeedbackComment, FeedbackRating, FeedbackDate, CustomerID, ProductID)
+    VALUES ('$comment', $rating, CURDATE(), $customer_id, $product)
 ";
 
 if (mysqli_query($conn, $insert_feedback)) {
