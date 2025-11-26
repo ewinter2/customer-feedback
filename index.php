@@ -24,7 +24,7 @@
 <div class="admin-box">
     <h3>Admin Portal</h3>
 
-    <a href="admin_login.php">Existing Admin Login</a><br>
+    <a href="admin_login.php">Admin Login</a><br>
     <a href="admin_signup.php">Create New Admin Account</a>
 </div>
 

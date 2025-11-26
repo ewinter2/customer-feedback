@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 include("db.php");
@@ -14,12 +15,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $desc = trim($_POST['product_description']);
 
     if (!empty($name)) {
-        $admin_id = $_SESSION['admin_id'];  // ← new line
+
+        $admin_id = $_SESSION['admin_id'];  // REQUIRED
 
         $sql = "INSERT INTO Product (ProductName, ProductDescription, AdminID)
                 VALUES ('$name', '$desc', '$admin_id')";
-        mysqli_query($conn, $sql);
-        $success = "Product added successfully!";
+
+        if (mysqli_query($conn, $sql)) {
+            $success = "Product added successfully!";
+        } else {
+            $error = "Error: " . mysqli_error($conn);
+        }
+
     } else {
         $error = "Product name cannot be empty.";
     }

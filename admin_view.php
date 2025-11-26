@@ -83,7 +83,7 @@ $admin_name = $_SESSION['admin_name'];
 <!-- Top Navigation -->
 <div style="text-align:center; margin-bottom: 15px;">
     <a href="manage_products.php">Manage My Products</a> |
-    <a href="admin_logout.php">Logout</a>
+    <a href="index.php">Logout</a>
 </div>
 
 <!-- LEFT-ALIGNED FILTERS (no card, no white background) -->
