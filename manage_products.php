@@ -63,23 +63,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <tr>
             <th>Name</th>
             <th>Description</th>
+            <th></th>
         </tr>
 
         <?php
         $admin_id = $_SESSION['admin_id'];
-
         $prod_sql = "SELECT * FROM Product WHERE AdminID = $admin_id";
         $result = mysqli_query($conn, $prod_sql);
-
 
         while ($row = mysqli_fetch_assoc($result)) {
             echo "<tr>
                     <td>{$row['ProductName']}</td>
                     <td>{$row['ProductDescription']}</td>
-                  </tr>";
+                    <td>
+                        <a href='delete_product.php?id={$row['ProductID']}'
+                        onclick=\"return confirm('Are you sure you want to delete this product?');\"
+                        style='color:red; text-decoration:none; font-weight:bold;'>
+                        Delete
+                        </a>
+                    </td>
+                </tr>";
         }
         ?>
     </table>
+
 
     <div style="text-align:center; margin-top:15px;">
         <a href='admin_view.php'>Back to Admin Dashboard</a>
