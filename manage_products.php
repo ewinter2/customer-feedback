@@ -66,8 +66,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </tr>
 
         <?php
-        $prod_sql = "SELECT * FROM Product";
+        $admin_id = $_SESSION['admin_id'];
+
+        $prod_sql = "SELECT * FROM Product WHERE AdminID = $admin_id";
         $result = mysqli_query($conn, $prod_sql);
+
 
         while ($row = mysqli_fetch_assoc($result)) {
             echo "<tr>
