@@ -122,14 +122,21 @@ $admin_name = $_SESSION['admin_name'];
 
 <?php
 // Base query
+$admin_id = $_SESSION['admin_id'];
+
 $query = "
-    SELECT Feedback.*, Customer.CustomerName, Customer.CustomerEmail,
-           Product.ProductName
+    SELECT 
+        Feedback.FeedbackComment,
+        Feedback.FeedbackRating,
+        Feedback.FeedbackDate,
+        Customer.CustomerName,
+        Customer.CustomerEmail,
+        Product.ProductName
     FROM Feedback
     JOIN Customer ON Feedback.CustomerID = Customer.CustomerID
     JOIN Product ON Feedback.ProductID = Product.ProductID
     WHERE Product.AdminID = $admin_id
-";
+    ";
 
 // Filters
 if (!empty($_GET['product'])) {
